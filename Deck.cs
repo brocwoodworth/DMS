@@ -8,12 +8,11 @@ namespace DMS
 {
 	public class Deck
 	{
-		public enum State { drawPile, inHand, inPlay, discardPile, inTrash }
-		private static Random rng = new Random();
+		public enum State { drawPile, inHand, inPlay, discardPile, inTrash, inKingdom }
 
-		private List<Card> Cards { get; set; }
-		private State state;
-		private string PlayerName;
+		public List<Card> Cards { get; set; }
+		public State state;
+		public string PlayerName;
 
 		public Deck(State state, string PlayerName)
 		{
@@ -35,20 +34,6 @@ namespace DMS
 
 			this.state = state;
 			this.PlayerName = PlayerName;
-		}
-
-		//Shuffles the entire deck's order, regardless of card state
-		public void Shuffle()
-		{
-			int n = Cards.Count;
-			while (n > 1)
-			{
-				n--;
-				int k = rng.Next(n + 1);
-				Card value = Cards[k];
-				Cards[k] = Cards[n];
-				Cards[n] = value;
-			}
 		}
 
 		public void PrintDeck()

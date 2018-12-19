@@ -16,11 +16,17 @@ namespace DMS
 			testString = Console.ReadLine();
 			Console.WriteLine("You entered '{0}'", testString);*/
 
+			bool gameOver = false;
+
 			Player Broc = new Player("Broc");
-			Broc.drawPile.Shuffle();
-			Broc.PrintPlayer();
-			Console.Write("\r\nPress enter to quit...");
-			string testString = Console.ReadLine();
+			do
+			{
+				Broc.PrintPlayer();
+				Console.Write("\r\nPress Q to quit...");
+				string testString = Console.ReadLine();
+				if (testString == "Q" || testString == "q")
+					gameOver = true;
+			} while (!gameOver);
 		}
 	}
 }
