@@ -38,13 +38,37 @@ namespace DMS
 
 		public void PrintDeck()
 		{
-			Console.WriteLine("State of " + PlayerName + "'s deck: " + state + ".");
-
-			if (Cards.Count > 0)
+			if (state == State.inHand)
 			{
-				foreach (Card card in Cards)
-					card.PrintCard();
-				Console.WriteLine("\r\n");
+				Console.WriteLine("\r\n" + PlayerName + "'s Hand: \r\n");
+
+				if (Cards.Count > 0)
+				{
+					foreach (Card card in Cards)
+						Console.WriteLine(card.PrintCard());
+				}
+			}
+			else if (state != State.inKingdom)
+			{
+				Console.WriteLine("State of " + PlayerName + "'s deck: " + state + ".");
+
+				if (Cards.Count > 0)
+				{
+					foreach (Card card in Cards)
+						Console.WriteLine(card.PrintCard());
+				}
+			}
+			else //if State.inKingdom
+			{
+				if (Cards.Count > 0)
+				{
+					if(Cards.Count < 10)
+						Console.WriteLine("(Q:  " + Cards.Count + ") " + Cards[0].PrintCard());
+					else
+						Console.WriteLine("(Q: " + Cards.Count + ") " + Cards[0].PrintCard());
+				}
+				else
+					Console.WriteLine("Empty Pile - " + PlayerName);
 			}
 		}
 	}
