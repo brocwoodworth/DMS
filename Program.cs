@@ -17,28 +17,37 @@ namespace DMS
 			Kingdom myKingdom = new Kingdom(1, false);
 			do
 			{
+				Broc.StartTurn();
 				do
 				{
 					myKingdom.PrintKingdom();
-					Broc.PrintHand();
-					Broc.StartTurn();
-					Console.Write("\r\nA to play an action. B to go to buy phase. H for help. Q to quit.\r\n");
-					Console.Write("Actions: " + Broc.Actions + ", Buys: " + Broc.Buys + ", Dollars: " + Broc.Dollars + ".\r\n");
-					switch (Console.ReadLine().ToLower())
+					if (Broc.HasActions())
 					{
-						case "a":
-							//Broc.PlayAction();
-							break;
-						case "b":
-							Broc.BuyPhase(myKingdom);
-							break;
-						case "q":
-							gameOver = true;
-							break;
+						Broc.PrintHand();
+						Console.Write("\r\nA to play an action. B to go to buy phase. T to print Trash. H for help. Q to quit.\r\n");
+						Console.Write("Actions: " + Broc.Actions + ", Buys: " + Broc.Buys + ", Dollars: " + Broc.Dollars + ".\r\n");
+						switch (Console.ReadLine().ToLower())
+						{
+							case "a":
+								Broc.ActionPhase(myKingdom);
+								break;
+							case "b":
+								Broc.BuyPhase(myKingdom);
+								break;
+							case "t":
+								myKingdom.PrintTrash();
+								break;
+							case "printplayer":
+								Broc.PrintPlayer();
+								break;
+							case "q":
+								gameOver = true;
+								break;
+						}
 					}
-
-
-				} while (!Broc.TurnComplete);
+					else
+						Broc.BuyPhase(myKingdom);
+				} while (!Broc.TurnComplete && !gameOver);
 
 				Broc.Cleanup(myKingdom);
 

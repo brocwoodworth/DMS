@@ -8,14 +8,16 @@ using Newtonsoft.Json.Linq;
 
 namespace DMS
 {
-	class Kingdom
+	public class Kingdom
 	{
 		public List<Deck> KingdomSupply { get; set; }
 		private int maxCurses { get; set; }
 		private int maxVictory { get; set; }
+		public Deck Trash { get; set; }
 
 		public Kingdom(int? players = 2, bool colonyDay = false)
 		{
+			Trash = new Deck(Deck.State.inTrash, "KINGDOM");
 			this.maxCurses = 10;
 			this.maxVictory = 8;
 
@@ -58,15 +60,15 @@ namespace DMS
 
 			for (int i = 0; i < 30; i++)
 			{
-				Card copper = new Card("Copper", Card.Type.Treasure, 0);
-				Card silver = new Card("Silver", Card.Type.Treasure, 3);
-				Card gold = new Card("Gold", Card.Type.Treasure, 6);
-				Card estate = new Card("Estate", Card.Type.Victory, 2);
-				Card duchy = new Card("Duchy", Card.Type.Victory, 5);
-				Card province = new Card("Province", Card.Type.Victory, 8);
-				Card curse = new Card("Curse", Card.Type.Curse, 0);
-				Card platinum = new Card("Platinum", Card.Type.Treasure, 9);
-				Card colony = new Card("Colony", Card.Type.Victory, 11);
+				Card copper = new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0);
+				Card silver = new Card("Silver", Card.Expansion.Basic, Card.Type.Treasure, 3);
+				Card gold = new Card("Gold", Card.Expansion.Basic, Card.Type.Treasure, 6);
+				Card estate = new Card("Estate", Card.Expansion.Basic, Card.Type.Victory, 2);
+				Card duchy = new Card("Duchy", Card.Expansion.Basic, Card.Type.Victory, 5);
+				Card province = new Card("Province", Card.Expansion.Basic, Card.Type.Victory, 8);
+				Card curse = new Card("Curse", Card.Expansion.Basic, Card.Type.Curse, 0);
+				Card platinum = new Card("Platinum", Card.Expansion.Basic, Card.Type.Treasure, 9);
+				Card colony = new Card("Colony", Card.Expansion.Basic, Card.Type.Victory, 11);
 
 				if (i < maxVictory)
 				{
@@ -131,6 +133,9 @@ namespace DMS
 			fillKingdomPile(KingdomCard8, KingdomPile8);
 			fillKingdomPile(KingdomCard9, KingdomPile9);
 			fillKingdomPile(KingdomCard10, KingdomPile10);
+
+			//Sort by cost for easier reading
+			KingdomSupply = KingdomSupply.OrderBy(o => o.Cards[0].cost).ToList();
 		}
 
 		private void fillKingdomPile(Card card, Deck deck)
@@ -174,6 +179,15 @@ namespace DMS
 			Console.WriteLine("\r\n--- Kingdom Cards ---\r\n");
 			foreach (Deck deck in KingdomSupply)
 				deck.PrintDeck();
+		}
+
+		public void PrintTrash()
+		{
+			Console.WriteLine("\r\n--- Trash Pile ---\r\n");
+			if (Trash.Cards.Count > 0)
+				Trash.PrintDeck();
+			else
+				Console.WriteLine("--- (Empty) ---\r\n");
 		}
 	}
 }

@@ -8,7 +8,7 @@ namespace DMS
 {
 	public class Deck
 	{
-		public enum State { drawPile, inHand, inPlay, discardPile, inTrash, inKingdom }
+		public enum State { None = 0, drawPile, inHand, inPlay, discardPile, inTrash, inKingdom, temp }
 
 		public List<Card> Cards { get; set; }
 		public State state;
@@ -18,16 +18,16 @@ namespace DMS
 		{
 			if (state == State.drawPile)
 			{
-				Cards = new List<Card>() { new Card("Copper", Card.Type.Treasure, 0),
-										   new Card("Copper", Card.Type.Treasure, 0),
-										   new Card("Copper", Card.Type.Treasure, 0),
-										   new Card("Copper", Card.Type.Treasure, 0),
-										   new Card("Copper", Card.Type.Treasure, 0),
-										   new Card("Copper", Card.Type.Treasure, 0),
-										   new Card("Copper", Card.Type.Treasure, 0),
-										   new Card("Estate", Card.Type.Victory, 2),
-										   new Card("Estate", Card.Type.Victory, 2),
-										   new Card("Estate", Card.Type.Victory, 2)};
+				Cards = new List<Card>() { new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0),
+										   new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0),
+										   new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0),
+										   new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0),
+										   new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0),
+										   new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0),
+										   new Card("Copper", Card.Expansion.Basic, Card.Type.Treasure, 0),
+										   new Card("Estate", Card.Expansion.Basic, Card.Type.Victory, 2),
+										   new Card("Estate", Card.Expansion.Basic, Card.Type.Victory, 2),
+										   new Card("Estate", Card.Expansion.Basic, Card.Type.Victory, 2)};
 			}
 			else
 				Cards = new List<Card>();
