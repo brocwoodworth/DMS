@@ -159,6 +159,7 @@ namespace DMS
 		{
 			bool readyToBuy = false;
 			int index = 1;
+			ClearIndex(myKingdom);
 			foreach (Card card in inHand.Cards)
 			{
 				if(card.types.Contains(Card.Type.Treasure))
@@ -313,6 +314,12 @@ namespace DMS
 			discardPile.Cards.Add(card);
 		}
 
+		public void HandToTopOfDrawPile(Card card)
+		{
+			drawPile.Cards.Insert(0, card);
+			inHand.Cards.Remove(card);
+		}
+
 		public void GainCard(Card card, Deck deck, Deck.State state = 0)
 		{
 			if (state == 0 || state == Deck.State.discardPile)
@@ -399,6 +406,22 @@ namespace DMS
 		public void AddBuys(int buys)
 		{
 			Buys = Buys + buys;
+		}
+		public void GainCardByName(string cardName, bool optional, Kingdom myKingdom, Deck.State state = Deck.State.discardPile)
+		{
+			foreach(Deck deck in myKingdom.KingdomSupply)
+			{
+				if(deck.Cards.Count > 0)
+				{
+					if(deck.Cards[0].name == cardName)
+					{
+						Card cardToGain = deck.Cards[deck.Cards.Count - 1];
+						GainCard(cardToGain, deck, state);
+						return;
+					}
+				}
+			}
+			Console.WriteLine("\r\nNo " + cardName + " available.\r\n");
 		}
 
 		public void GainCardByCost(int cost, bool exactCost, bool optional, Kingdom myKingdom, Deck.State state = Deck.State.discardPile, Card.Type type = 0)

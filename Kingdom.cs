@@ -10,14 +10,16 @@ namespace DMS
 {
 	public class Kingdom
 	{
+		public enum SetName {Random = 0, FirstGame, SizeDistortion, DeckTop, SleightOfHand, Improvements, SilverAndGold };
 		public List<Deck> KingdomSupply { get; set; }
 		private int maxCurses { get; set; }
 		private int maxVictory { get; set; }
 		public Deck Trash { get; set; }
 
-		public Kingdom(int? players = 2, bool colonyDay = false)
+		public Kingdom(SetName setName = 0, int? players = 2, bool colonyDay = false)
 		{
 			Trash = new Deck(Deck.State.inTrash, "KINGDOM");
+			KingdomSupply = new List<Deck>();
 			this.maxCurses = 10;
 			this.maxVictory = 8;
 
@@ -31,9 +33,16 @@ namespace DMS
 				this.maxCurses = 30;
 				this.maxVictory = 12;
 			}
-			
-			KingdomSupply = new List<Deck>();
 
+			populateBasicCards(KingdomSupply, colonyDay);
+			populateNonBasicCards(KingdomSupply, setName);
+
+			//Sort by cost for easier reading
+			KingdomSupply = KingdomSupply.OrderBy(o => o.Cards[0].cost).ToList();
+		}
+
+		private void populateBasicCards(List<Deck> KingdomSupply, bool colonyDay = false)
+		{
 			Deck CopperSupply = new Deck(Deck.State.inKingdom, "Copper");
 			Deck SilverSupply = new Deck(Deck.State.inKingdom, "Silver");
 			Deck GoldSupply = new Deck(Deck.State.inKingdom, "Gold");
@@ -52,7 +61,7 @@ namespace DMS
 			KingdomSupply.Add(ProvinceSupply);
 			KingdomSupply.Add(CurseSupply);
 
-			if(colonyDay)
+			if (colonyDay)
 			{
 				KingdomSupply.Add(PlatinumSupply);
 				KingdomSupply.Add(ColonySupply);
@@ -75,7 +84,7 @@ namespace DMS
 					EstateSupply.Cards.Add(estate);
 					DuchySupply.Cards.Add(duchy);
 					ProvinceSupply.Cards.Add(province);
-					if(colonyDay)
+					if (colonyDay)
 						ColonySupply.Cards.Add(colony);
 				}
 				if (i < maxCurses)
@@ -87,55 +96,105 @@ namespace DMS
 				SilverSupply.Cards.Add(silver);
 				GoldSupply.Cards.Add(gold);
 			}
+		}
 
-			Deck KingdomPile1 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile2 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile3 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile4 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile5 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile6 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile7 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile8 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile9 = new Deck(Deck.State.inKingdom, "");
-			Deck KingdomPile10 = new Deck(Deck.State.inKingdom, "");
-
-			KingdomSupply.Add(KingdomPile1);
-			KingdomSupply.Add(KingdomPile2);
-			KingdomSupply.Add(KingdomPile3);
-			KingdomSupply.Add(KingdomPile4);
-			KingdomSupply.Add(KingdomPile5);
-			KingdomSupply.Add(KingdomPile6);
-			KingdomSupply.Add(KingdomPile7);
-			KingdomSupply.Add(KingdomPile8);
-			KingdomSupply.Add(KingdomPile9);
-			KingdomSupply.Add(KingdomPile10);
-
+		private void populateNonBasicCards(List<Deck> KingdomSupply, SetName setName)
+		{
 			Sets.BaseSet baseSet = new Sets.BaseSet();
+			List<Card> KingdomSupplyTemplate = new List<Card>();
 
-			Card KingdomCard1 = baseSet.getRandomCard();
-			Card KingdomCard2 = baseSet.getRandomCard();
-			Card KingdomCard3 = baseSet.getRandomCard();
-			Card KingdomCard4 = baseSet.getRandomCard();
-			Card KingdomCard5 = baseSet.getRandomCard();
-			Card KingdomCard6 = baseSet.getRandomCard();
-			Card KingdomCard7 = baseSet.getRandomCard();
-			Card KingdomCard8 = baseSet.getRandomCard();
-			Card KingdomCard9 = baseSet.getRandomCard();
-			Card KingdomCard10 = baseSet.getRandomCard();
+			switch (setName)
+			{
+				case SetName.Random:
+					for (int i = 0; i < 10; i++)
+					{
+						//Uncomment to test a specific card
+						if (i == 0)
+							KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Spy));
+						else
+							KingdomSupplyTemplate.Add(baseSet.getBaseSetCard());
+					}
+					break;
+				case SetName.FirstGame:
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Cellar));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Market));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Merchant));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Militia));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Mine));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Moat));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Remodel));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Smithy));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Village));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Workshop));
+					break;
+				case SetName.SizeDistortion:
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Artisan));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Bandit));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Bureaucrat));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Chapel));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Festival));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Gardens));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Sentry));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.ThroneRoom));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Witch));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Workshop));
+					break;
+				case SetName.DeckTop:
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Artisan));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Bureaucrat));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.CouncilRoom));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Festival));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Harbinger));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Laboratory));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Moneylender));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Sentry));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Vassal));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Village));
+					break;
+				case SetName.SleightOfHand:
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Cellar));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.CouncilRoom));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Festival));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Gardens));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Library));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Harbinger));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Militia));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Poacher));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Smithy));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.ThroneRoom));
+					break;
+				case SetName.Improvements:
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Artisan));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Cellar));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Market));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Merchant));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Mine));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Moat));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Moneylender));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Poacher));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Remodel));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Witch));
+					break;
+				case SetName.SilverAndGold:
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Bandit));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Bureaucrat));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Chapel));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Harbinger));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Laboratory));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Merchant));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Mine));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Moneylender));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.ThroneRoom));
+					KingdomSupplyTemplate.Add(baseSet.getBaseSetCard(Sets.BaseSet.BaseSetCards.Vassal));
+					break;
+			}
 
-			fillKingdomPile(KingdomCard1, KingdomPile1);
-			fillKingdomPile(KingdomCard2, KingdomPile2);
-			fillKingdomPile(KingdomCard3, KingdomPile3);
-			fillKingdomPile(KingdomCard4, KingdomPile4);
-			fillKingdomPile(KingdomCard5, KingdomPile5);
-			fillKingdomPile(KingdomCard6, KingdomPile6);
-			fillKingdomPile(KingdomCard7, KingdomPile7);
-			fillKingdomPile(KingdomCard8, KingdomPile8);
-			fillKingdomPile(KingdomCard9, KingdomPile9);
-			fillKingdomPile(KingdomCard10, KingdomPile10);
-
-			//Sort by cost for easier reading
-			KingdomSupply = KingdomSupply.OrderBy(o => o.Cards[0].cost).ToList();
+			foreach (Card card in KingdomSupplyTemplate)
+			{
+				Deck KingdomPile = new Deck(Deck.State.inKingdom, "");
+				KingdomSupply.Add(KingdomPile);
+				fillKingdomPile(card, KingdomPile);
+			}
 		}
 
 		private void fillKingdomPile(Card card, Deck deck)

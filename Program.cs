@@ -14,7 +14,17 @@ namespace DMS
 			bool gameOver = false;
 
 			Player Broc = new Player("Broc");
-			Kingdom myKingdom = new Kingdom(1, false);
+			Kingdom.SetName chosenSet = Kingdom.SetName.Random;
+			Console.Write("\r\nWelcome to Dominion Mimicing Software!\r\n\r\n Please choose a recommended Set of 10 from the list below, or anything else for Random.\r\n\r\n");
+			Console.Write("[1]: First Game\r\n[2]: Size Distortion\r\n[3]: Deck Top\r\n[4]: Sleight of Hand\r\n[5]: Improvements\r\n[6]: Silver & Gold\r\n\r\n");
+			string chosenSetInput = Console.ReadLine().ToLower();
+			int intChosenSet = -1;
+			if (Int32.TryParse(chosenSetInput, out intChosenSet))
+			{
+				if (intChosenSet >= 0 && intChosenSet <= 6)
+					chosenSet = (Kingdom.SetName)intChosenSet;
+			}
+			Kingdom myKingdom = new Kingdom((Kingdom.SetName)intChosenSet, 1, false);
 			do
 			{
 				Broc.StartTurn();
